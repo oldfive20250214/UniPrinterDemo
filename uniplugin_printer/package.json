@@ -1,0 +1,28 @@
+{
+    "name": "uniplugin_printer",
+    "id": "uniplugin_printer",
+    "version": "1.0.0",
+    "description": "打印机uniapp插件",
+    "_dp_type":"nativeplugin",
+    "_dp_nativeplugin":{
+        "android": {
+            "plugins": [
+                {
+                    "type": "module",
+                    "name":"Printer",
+                    "class": "com.example.uniprinter.UniPrinter"
+                }
+            ],
+            "integrateType": "aar" 
+        },
+		  "ios": {
+		    "plugins": [{
+		      "type": "module",
+		      "name": "Printer",
+		      "class": "UniPrinter"
+		    }],
+		    "integrateType": "library",
+		    "deploymentTarget": "9.0"
+		  }
+    }
+}

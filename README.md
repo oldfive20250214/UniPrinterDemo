@@ -1,2 +1,872 @@
-# UniPrinterDemo
-unprinted
+# 使用流程（支持安卓和iOS）
+## 引入SDK
+引入原生插件包
+
+## 连接设备
+安卓支持经典蓝牙、ble蓝牙、usb、局域网（参考API）
+
+iOS支持ble蓝牙、局域网（参考API）
+
+## 拼接模版
+声明对象
+
+const printer = uni.requireNativePlugin("Printer")
+
+### tspl模版用例1（打印常用指令）
+```java
+printer.addSize({"width":75,"height":135});
+printer.addCls();
+printer.addDirection({"n":0,"m":0});
+printer.addGap({"m":2,"n":0});
+printer.addText({"x":50,"y":50,"font":"TSS16.BF2","rotate":0,"xMultiple":1,"yMultiple":1,"alignment":0,"content":"16号字体"});
+printer.addBox({"x":20,"y":20,"x_end":500,"y_end":800,"thickness":2,"radius":0});
+printer.addText({"x":50,"y":100,"font":"TSS24.BF2","rotate":0,"xMultiple":1,"yMultiple":1,"alignment":0,"content":"24号字体"});
+printer.addText({"x":250,"y":50,"font":"TSS16.BF2","rotate":0,"xMultiple":1,"yMultiple":1,"alignment":0,"content":"16号字体"});
+printer.addReverse({"x":240,"y":40,"width":200,"height":40});
+printer.addBar({"x":50,"y":200,"width":300,"height":3});
+printer.addBarcode({"x":50,"y":210,"codeType":"128","height":100,"style":1,"rotation":0,"narrow":2,"wide":2,"alignment":0,"content":"test123456"});
+printer.addQRCode({"x":50,"y":350,"eccLevel":"L","cellWidth":7,"mode":"M","rotate":0,"model":"M1","mask":"S3","content":"test123456"})
+printer.addPrint({"m":1,"n":1});
+
+
+```
+
+### tspl模版用例2（打印图片）
+```java
+printer.addSize({"width":75,"height":135});
+printer.addCls();
+printer.addDirection({"n":0,"m":0});
+printer.addGap({"m":2,"n":0});
+printer.addBitmap({"x":0,"y":0,"mode":0,"base64":imageBase64});
+printer.addPrint({"m":1,"n":1});
+
+```
+
+### cpcl模版用例1（打印常用指令）
+```java
+printer.cpcl_addInit({"height":600,"copys":1});
+printer.cpcl_addUnit("IN-DOTS");
+printer.cpcl_addWidth(600);
+printer.cpcl_setMag({"w":1,"h":1});
+printer.cpcl_addText({"cmd":"T","font":"1","size":"0","x":50,"y":150,"data":"24*24字体"});
+printer.cpcl_addText({"cmd":"T","font":"4","size":"0","x":50,"y":200,"data":"32*32字体"});
+printer.cpcl_setMag({"w":2,"h":1});
+printer.cpcl_addText({"cmd":"T","font":"4","size":"0","x":50,"y":250,"data":"48*24字体"});
+printer.cpcl_setMag({"w":3,"h":3});
+printer.cpcl_addText({"cmd":"T","font":"4","size":"0","x":50,"y":300,"data":"72*72字体"});
+printer.cpcl_setMag({"w":1,"h":1});
+printer.cpcl_addLine({"startx":50,"starty":380,"endx":250,"endy":380,"width":5});
+printer.cpcl_addBarcode({"isvb":false,"codetype":"128","width":1,"radio":"1","height":50,"x":50,"y":390,"data":"test123456"});
+printer.cpcl_addQrcode({"isVQ":false,"codetype":"QR","x":50,"y":450,"m":2,"n":6,"data1":"M","data2":"A","data3":"test123456"});
+printer.cpcl_form();
+printer.cpcl_print();
+
+```
+
+### cpcl模版用例2（打印图片）
+```java
+printer.cpcl_addInit({"height":600,"copys":1});
+printer.cpcl_addUnit("IN-DOTS");
+printer.cpcl_addWidth(600);
+printer.cpcl_addBitmap({"x":0,"y":0,"mode":0,"base64":imageBase64});
+printer.cpcl_form();
+printer.cpcl_print();
+
+```
+
+### esc模版用例1（打印常用指令）
+```java
+printer.esc_addInit();
+printer.esc_addAlign(1);
+printer.esc_setCharSize({"width":0,"height":0});
+printer.esc_addText("快麦打印机居中\r\n");
+printer.esc_addAlign(0);
+printer.esc_setCharSize({"width":1,"height":1});
+printer.esc_addText("快麦打印机放大1-1\r\n");
+printer.esc_setCharSize({"width":2,"height":2});
+printer.esc_addText("快麦打印机放大2-2\r\n");
+printer.esc_setCharSize({"width":0,"height":0});
+printer.esc_addLocation(10);
+printer.esc_addText("text1");
+printer.esc_addLocation(257);
+printer.esc_addText("text2\r\n\r\n");
+printer.esc_addText("width2条码宽度36mm\r\n");
+printer.esc_barCode({"width":2,"height":80,"font":1,"loc":2,"m":73,"data":"width2abcd"});
+printer.esc_addText("\r\n");
+printer.esc_addText("width3条码宽度54mm\r\n");
+printer.esc_barCode({"width":3,"height":80,"font":1,"loc":2,"m":73,"data":"width3abcd"});
+printer.esc_addText("\r\n");
+printer.esc_print();
+printer.esc_addText("SIZE-1二维码宽度3mm\r\n");
+printer.esc_qrCode({"size":1,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-2-二维码宽度4mm\r\n");
+printer.esc_qrCode({"size":2,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-3-二维码宽度7mm\r\n");
+printer.esc_qrCode({"size":3,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-4-二维码宽度10mm\r\n");
+printer.esc_qrCode({"size":4,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-5-二维码宽度13mm\r\n");
+printer.esc_qrCode({"size":5,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-6-二维码宽度16mm\r\n");
+printer.esc_qrCode({"size":6,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-7-二维码宽度18mm\r\n");
+printer.esc_qrCode({"size":7,"data":"test123456"});
+printer.esc_addText("\r\nSIZE-8-二维码宽度21mm\r\n");
+printer.esc_qrCode({"size":8,"data":"test123456"});
+printer.esc_print();
+printer.esc_feed(5);
+
+```
+
+### esc模版用例2（打印图片）
+```java
+printer.esc_addInit();
+printer.esc_addBitmap({"mode":0,"base64":imageBase64});
+printer.esc_feed(5);
+```
+
+### 获取sdk生成的模版数据（获取后清空缓存）
+```java
+printer.get_printData({},result => {
+    var obj = JSON.parse(result);
+    console.log(obj.data);
+    console.log(obj.data.base64);
+});
+```
+
+
+
+## 开始打印
+安卓支持经典蓝牙、ble蓝牙、usb、局域网（参考API）
+
+iOS支持ble蓝牙、局域网（参考API）
+
+# 安卓经典蓝牙API
+## 打开蓝牙
+```java
+printer.spp_openBluetoothAdapter(result => {
+                                      console.log(result);
+                                      });
+```
+
+## 扫描蓝牙
+```java
+printer.spp_startBluetoothDevicesDiscovery(result => {
+                                                console.log(result);
+                                                });
+```
+
+## 连接蓝牙
+```java
+printer.spp_getConnectDevice({"address":adress},result => {
+console.log(result);
+});
+```
+
+## 蓝牙写入
+```java
+//将写入模版数据的base64
+//base64为空或者不传会默认打印拼接缓存数据，打印后会清空缓存
+printer. spp_writeData({"base64":base64},result => {
+                                    console.log(result);
+                                    });
+```
+
+## 停止蓝牙扫描
+```java
+printer.spp_stopBluetoothDevicesDiscovery(result => {
+                                               console.log(result);
+                                               });
+```
+
+## 关闭蓝牙
+```java
+printer.spp_closeBluetoothAdapter(result => {
+                                               console.log(result);
+                                               });
+
+```
+
+## 蓝牙连接状态
+```java
+printer.spp_isConnectClassicBT({"address":address},result => {
+                                               console.log(result);
+                                               });
+```
+
+
+
+# 低功耗蓝牙API（支持安卓和iOS）
+## 打开蓝牙
+```java
+
+printer.ble_openBluetoothAdapter(result => {
+                                               console.log(result);
+                                               });
+```
+
+## 扫描蓝牙
+```java
+printer.ble_startBluetoothDevicesDiscovery(result => {
+                                               console.log(result);
+                                               });
+```
+
+## 连接蓝牙
+```java
+
+printer.ble_getConnectDevice({"address":address},result => {
+                                               console.log(result);
+                                               });
+```
+
+## 蓝牙写入数据
+```java
+//将写入模版数据的base64
+//base64为空或者不传会默认打印拼接缓存数据，打印后会清空缓存
+printer.ble_writeData({"base64":base64},result => {
+    console.log(result);
+});
+```
+
+
+
+
+
+## 停止蓝牙扫描
+```java
+printer.ble_stopBluetoothDevicesDiscovery(result => {
+                                    console.log(result);
+                                    });
+```
+
+## 关闭蓝牙
+```java
+printer.ble_closeBluetoothAdapter(result => {
+                                    console.log(result);
+                                    });
+```
+
+## 蓝牙连接状态
+```java
+/** 状态对应以下数字
+         * int STATE_CONNECTED = 2;
+         * int STATE_CONNECTING = 1;
+         * int STATE_DISCONNECTED = 0;
+         * int STATE_DISCONNECTING = 3;
+         */
+printer.ble_connectState(result => {
+                              console.log(result);
+                              });
+```
+
+# 安卓usb打印API
+## 打开usb
+```java
+printer.usb_openUsb(result => {
+                              console.log(result);
+                              });
+```
+
+## 扫描usb
+```java
+
+printer.usb_starUsbDevicesDiscovery(result => {
+                              console.log(result);
+                              });
+```
+
+## 连接usb
+```java
+
+printer.usb_usbConnect({"pid":pid,"vid":vid},result => {
+                              console.log(result);
+                              });
+```
+
+## usb写入数据
+拿到数据后再写入拿到的数据
+
+```java
+//获取sdk生成的模版数据
+printer.get_printData({},result => {
+    var obj = JSON.parse(result);
+    console.log(obj.data);
+    console.log(obj.data.base64);
+});
+//将写入模版数据的base64
+printer.usb_writeData({"base64":base64},result => {
+    console.log(result);
+});
+```
+
+
+
+## usb读取数据
+```java
+
+printer.usb_read(result => {
+                                    console.log(result);
+                                    });
+```
+
+## 关闭usb连接
+```java
+printer.usb_close(result => {
+                                    console.log(result);
+                                    });
+```
+
+
+
+
+
+# 局域网打印API（支持安卓和iOS）
+## 连接打印机
+局域网打印需要手机和打印机在同一个局域网内，手机去连接打印机的ip地址和端口
+
+```java
+printer.net_connectScoket({"host":host,"port":port},result => {
+    console.log(result);
+});
+```
+
+
+
+## 发送数据
+```java
+//将写入模版数据的base64
+//base64为空或者不传会默认打印拼接缓存数据，打印后会清空缓存
+printer.net_writeData({"base64":base64},result => {
+    console.log(result);
+});
+```
+
+
+
+## 断开连接
+```objectivec
+printer.net_closeScoket(result => {
+                                    console.log(result);
+                                    });
+```
+
+# TSPL指令API（支持安卓和iOS）
+## 指定画板版宽高
+```java
+/**
+     * 设置打印模版宽高
+     * @param width 打印宽度单位 mm int
+     * @param height 打印高度 mm int
+     * @return
+     */
+addSize({"width":width,"height":height})
+```
+
+## 清空打印机画板缓存
+```java
+/**
+     * 清空打印机画板缓存
+     * @return
+     */
+addCls()
+```
+
+## 指定打印浓度
+```java
+/**
+     * 指定打印浓度
+     * @param n  范围1-15 String
+     * @return
+     */
+addDensity(n)
+```
+
+## 指定打印速度
+```java
+/**
+     * 指定打印速度
+     * @param n  范围1-8 String
+     * @return
+     */
+addSpeed(n)
+```
+
+## 生成文本指令
+```java
+/**
+     * 生成TEXT指令
+     * @param x 起始x坐标 int
+     * @param y 起始y坐标 int
+     * @param font 字体名称 String
+     * @param rotate 旋转角度 int
+     * @param xMultiple x倍数 int
+     * @param yMultiple y倍数 int
+     * @param alignment 对齐方式 默认0 int
+     * @param content 打印内容 String
+     * @return
+     */
+
+addText({"x":x,"y":y,"font":font,"rotate":rotate,"xMultiple": xMultiple,"yMultiple":yMultiple,"alignment":alignment,"content":content})
+
+```
+
+## 生成文本块
+```java
+/**
+     * TEXT模块 支持换行
+     * @param x 起始x坐标 int
+     * @param y 起始y坐标 int
+     * @param width  宽度，单位是点 int
+     * @param height 高度，单位是点 int
+     * @param font 字体名称 int
+     * @param rotate 旋转角度 int
+     * @param xMultiple x倍数 int
+     * @param yMultiple y倍数 int
+     * @param lineSpace 行间距 int
+     * @param alignment 对齐 int
+     * @param content 内容 String
+     * @return
+     */
+public KmPrinter crtiBlock({"x":x,"y":y,"width":width,"height":height,"font":font,"rotate":rotate,"xMultiple":xMultiple,"yMultiple":yMultiple,"lineSpace":lineSpace,"alignment":alignment,"content":content})
+
+
+```
+
+## 
+## 设置黑反打印区域
+```java
+/**
+     * 设置黑反打印区域
+     * @param x 起点x
+     * @param y 地点y
+     * @param width 宽
+     * @param height 高
+     * @return
+     */
+addReverse({int x, int y, int width, int height}) 
+```
+
+## 生成边框指令
+```java
+/**
+     * 生成边框指令
+     * @param x x坐标起点
+     * @param y y坐标起点
+     * @param x_end x坐标结束点
+     * @param y_end y坐标结束点
+     * @param thickness 线条厚度
+     * @param radius 边框弧度
+     * @return
+     */
+addBox({int x, int y, int x_end, int y_end, int thickness, int radius}) 
+```
+
+## 生成线条指令
+```java
+/**
+     * 生成线条指令
+     * @param x 起始x坐标
+     * @param y 起始y坐标
+     * @param width 宽度
+     * @param height 高度
+     * @return
+     */
+addBar({int x, int y, int width, int height})
+```
+
+## 生成条码指令
+```java
+/**
+     * 生成条码指令
+     * @param x x坐标
+     * @param y y坐标
+     * @param codeType 条码类型
+     * @param height 条码高度
+     * @param style 文字样式
+     *                  0：不可见
+     *                  1：可见居左
+     *                  2：可见居中
+     *                  3：可见居右
+     * @param rotation 旋转角度
+     * @param narrow 窄条宽度
+     * @param wide 宽条长度
+     * @param alignment 对齐方式
+     * @param content 条码内容
+     * @return
+     */
+addBarcode({int x, int y, String codeType, int height, int style, int rotation, int narrow, int wide, int alignment, String content})
+```
+
+## 生成二维码指令
+```java
+/**
+     * 生成二维码指令
+     * @param x 起始x坐标
+     * @param y 起始y坐标
+     * @param eccLevel  纠错等级 {7,15,25,30}
+     * @param cellWidth 码元宽度[1-10]
+     * @param mode  A:自动 M:手动
+     * @param rotate 旋转角度
+     * @param model  条码版本
+     * M1:(默认)，原始版本
+     * M2:增强版
+     * @param mask 掩膜版的种类，控制二维码的样式 S[0-8] 默认为S7
+     * @param content 二维码内容
+     * @return
+     */
+addQRCode({int x, int y, String eccLevel, int cellWidth, String mode, int rotate, String model, String mask, String content})
+```
+
+## 生成图片指令
+```java
+/**
+     * 生成图片指令
+     * @param x 图片x坐标
+     * @param y 图片y坐标
+     * @param mode 图片打印类型 0默认，正常打印  3，zlib压缩  4，zlib反白压缩
+     * @param base64 图片的base64
+     * @return
+     */
+addBitmap({int x, int y, int mode, String base64})
+```
+
+## 打印模版指令
+```java
+/**
+     * 打印模版
+     * @param m 指定要打印多少套标签。
+     * @param n 指定每个特定标签集应该打印多少份副本
+     * @return
+     */
+addPrint({int m, int n})
+```
+
+
+
+# CPCL指令API（支持安卓和iOS）
+## 新建打印模版
+```java
+/**
+     * 新建打印模版
+     * @param height 打印模版高度
+     * @param copys  打印份数
+     * @return
+     */
+cpcl_addInit({int height, int copys})
+```
+
+## 设置单位
+```java
+/**
+     * 设置单位
+     * @param unit IN-INCHES 度量单位英寸
+     *  IN-CENTIMETERS 度量单位厘米
+     *  IN-MILLIMETERS 度量单位毫米
+     *  IN-DOTS 度量单位为点
+     * @return
+     */
+cpcl_addUnit(String unit)
+```
+
+
+
+## 设置模版宽度
+```java
+/**
+     * 设置打印模版宽度
+     * @param width
+     * @return
+     */
+cpcl_addWidth(int width)
+```
+
+## 设置字体宽高倍数
+```java
+/**
+     * 设置字体宽高倍数
+     * @param w 宽度 1-3 1到3倍
+     * @param h 高度 1-3 1到3倍
+     * @return
+     */
+cpcl_setMag({int w, int h})
+```
+
+
+
+## 文本指令
+```java
+/**
+     * 文本指令
+     * @param cmd 指令类型 (逆时针旋转角度) 默认不旋转
+     * TEXT（或T）
+     * TEXT90（或 T90）
+     * TEXT180（或 T180）
+     * TEXT270（或 T270）
+     * @param font 0-6(根据打印机文档设置)
+     * @param size 0-6(根据打印机文档设置)
+     * @param x x坐标
+     * @param y y坐标
+     * @param data 打印数据
+     * @return
+     */
+cpcl_addText({String cmd, String font, String size, int x, int y, String data})
+```
+
+
+
+## 线条指令
+```java
+/**
+     * 线条指令
+     * @param startx 起点x坐标
+     * @param starty 起点y坐标
+     * @param endx  终点x坐标
+     * @param endy 终点y坐标
+     * @param width 线条宽度
+     * @return
+     */
+cpcl_addLine({int startx, int starty, int endx, int endy, int width})
+```
+
+## 黑反打印区域
+```java
+/**
+     * 黑反打印区域
+     * @param startx 起点x坐标
+     * @param starty 起点y坐标
+     * @param endx 终点x坐标
+     * @param endy 终点y坐标
+     * @param width 黑反区域宽度
+     * @return
+     */
+cpcl_addReverse({int startx, int starty, int endx, int endy, int width})
+```
+
+
+
+## 条码指令
+```java
+/**
+     * 条码指令
+     * @param isvb 0,1 默认0
+     * BARCODE（B）：横向打印条形码。
+     * VBARCODE(VB) ：纵向打印条形码
+     * @param codetype 条码类型 默认 128
+     * UPC-A： UPCA、UPCA2、UPCA5
+     * UPC-E： UPCE、UPCE2、UPCE5
+     * EAN/JAN-13： EAN13、EAN132、EAN135
+     * EAN/JAN-8： EAN8、EAN82、EAN 85
+     * Code 39： 39、39C、F39、F39C
+     * Code 93/Ext.93： 93
+     * Interleaved 2 of 5： I2OF5
+     * Interleaved 2 of 5（带checksum）：I2OF5C
+     * German Post Code： I2OF5G
+     * Code 128（自动）： 128
+     * UCC EAN 128： UCCEAN128
+     * Codabar： CODABAR、CODABAR16
+     * MSI/Plessy： MSI、MSI10、MSI1010、MSI1110
+     * Postnet： POSTNET
+     * FIM： FIM
+     * @param width 窄条单位宽度 默认1
+     * @param radio 宽条与窄条单位比例 默认1
+     * @param height 条码单位高度
+     * @param x x坐标
+     * @param y y坐标
+     * @param data 条码数据
+     * @return
+     */
+cpcl_addBarcode({boolean isvb, String codetype, int width, String radio, int height, int x, int y, String data})
+```
+
+
+
+## 二维码指令
+```java
+/**
+     *  二维码指令
+     * @param isVQ isVQ 是否纵向
+     * @param codetype 默认QR
+     * @param x x坐标
+     * @param y y坐标
+     * @param m  选项是 1 或 2。QR Code Model 1 是原始ྟ规范，2增强版 默认1
+     * @param n 模块单位宽度 1-32 默认6
+     * @param data1 纠错等级 H/极高可高级别 Q/高可靠级别 M/标准级别 L/高密度级别 默认M
+     * @param data2 字符模式 N数字 A字母数字 默认 A
+     * @param data3 二维码内容 二维码内容
+     * @return
+     */
+cpcl_addQrcode({boolean isVQ, String codetype, int x, int y, int m, int n, String data1, String data2, String data3})
+```
+
+
+
+## 图片指令
+```java
+/**
+     * 图片指令
+     * @param x
+     * @param y
+     * @param mode 0:CG指令模式 1:EG指令模式 3:CG指令压缩模式
+     * @param base64 图片的base64 
+     * @return
+     */
+cpcl_addBitmap({int x, int y,int mode, String base64})
+```
+
+
+
+## 打印机在一页打印结束后切换至下一页顶部
+```java
+/**
+     * 打印机在一页打印结束后切换至下一页顶部
+     * @return
+     */
+cpcl_form()
+```
+
+
+
+## 打印模版
+```java
+/**
+     * 打印模版
+     * @return
+     */
+cpcl_print()
+```
+
+## 反向出纸打印模版
+```java
+/**
+     * 反向出纸打印模版
+     * @return
+     */
+cpcl_poprint()
+```
+
+
+
+# ESC指令API（支持安卓和iOS）
+## 打印机初始化
+```java
+/**
+     * 打印机初始化
+     * @return
+     */
+esc_addInit()
+```
+
+
+
+## 设置绝对位置
+```java
+/**
+     * 设置绝对位置
+     * @param n 单位dot
+     * @return
+     */
+esc_addLocation(int n)
+```
+
+## 文本指令
+```java
+/**
+     * 文本指令
+     * @param text
+     * @return
+     */
+esc_addText(String text)
+```
+
+
+
+## 对齐方式
+```java
+/**
+     * 对齐方式
+     * @param align 0左对齐 1居中 2右对齐
+     * @return
+     */
+esc_addAlign(int align)
+```
+
+
+
+## 设置字符倍宽倍高
+```java
+/**
+     * 设置字符倍宽倍高
+     * @param width 0-7 分别是1-8倍 默认0正常
+     * @param height 0-7 分别是1-8倍 默认0正常
+     * @return
+     */
+esc_setCharSize({int width, int height})
+```
+
+
+
+## 打印条码
+```java
+/**
+     * 打印条码
+     * @param width 条码宽度 2 ≤ n ≤ 6
+     * @param height 条码高度 1 ≤ height ≤ 255
+     * @param font 条码字体 0,48:标准 ASCII 码字符 (12 × 24) 1,49:压缩 ASCII 码字符 (9 × 17)
+     * @param loc 条码位置显示0, 48:不打印 1, 49：条码上方 2, 50：条码下方 3, 51：条码上、下方都打印
+     * @param m 条码类型 0 ≤ m ≤ 6 65 ≤ m ≤ 73 具体用法参考文档
+     * @param data 条码数据
+     * @return
+     */
+esc_barCode({int width, int height, int font, int loc, int m, String data})
+```
+
+
+
+## 打印二维码
+```java
+/**
+     * 打印二维码
+     * @param size 二维码大小 1-15
+     * @param data 二维码数据
+     * @return
+     */
+esc_qrCode({int size, String data})
+```
+
+
+
+## 打印图片
+```java
+/**
+     * 打印图片
+     * @param mode 默认0
+     * @param base64 图片的base64
+     * @return
+     */
+esc_addBitmap({int mode, String base64})
+```
+
+
+
+## 打印并走纸多行
+```java
+/**
+     * 打印并走纸多行
+     * @param lines 1-255 走纸的行数
+     * @return
+     */
+esc_feed(int lines)
+```
+
+
+
+## 打印并走纸一行
+```java
+/**
+     * 打印并走纸一行
+     * @return
+     */
+esc_print()
+```
+
