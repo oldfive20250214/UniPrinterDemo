@@ -1,6 +1,7 @@
 # 使用流程（支持安卓和iOS）
 ## 引入SDK
-引入原生插件包
+引入原生插件包地址如下
+https://github.com/oldfive20250214/UniPrinterDemo
 
 ## 连接设备
 安卓支持经典蓝牙、ble蓝牙、usb、局域网（参考API）
