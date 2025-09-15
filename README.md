@@ -1,10 +1,12 @@
 # 使用流程（支持安卓和iOS）
+手把手教学+VX：Xzw421771880
 ## 引入SDK
 引入原生插件包地址如下
 https://github.com/oldfive20250214/UniPrinterDemo
 
 显示过期的api
 加个参数{key："eJwzNLewtDA3MDQ3AwALjAIX"}即可
+
 
 
 
