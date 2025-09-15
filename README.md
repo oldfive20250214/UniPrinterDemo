@@ -3,6 +3,11 @@
 引入原生插件包地址如下
 https://github.com/oldfive20250214/UniPrinterDemo
 
+显示过期的api
+加个参数{key："eJwzNLewtDA3MDQ3AwALjAIX"}即可
+
+
+
 ## 连接设备
 安卓支持经典蓝牙、ble蓝牙、usb、局域网（参考API）
 
